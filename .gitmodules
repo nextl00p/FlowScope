@@ -1,6 +1,7 @@
 [submodule "libmoon"]
-	path = libmoon
-	url = https://github.com/libmoon/libmoon
+    path = libmoon
+    url = https://github.com/nextl00p/libmoon
+    branch = nextl00p
 [submodule "tbb"]
 	path = tbb
 	url = https://github.com/01org/tbb.git
