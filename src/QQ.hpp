@@ -175,7 +175,11 @@ namespace QQ {
         }
 
         Storage& operator=(Storage&& other) noexcept {
-            std::swap(m_, other.m_);
+            auto p1 = std::make_unique<std::mutex>();
+            auto p2 = std::make_unique<std::mutex>();
+            p1 = other.m_;
+            p2 = m_;
+            std::swap(p2, p1);
             backend = other.backend;
             current = other.current;
             refs = std::move(other.refs);
