@@ -21,7 +21,7 @@ uint8_t* hmapk{key_size}v{value_size}_accessor_get_value(hmapk{key_size}v{value_
 local module = {}
 
 local keySizes = { 8, 16, 32, 64 }
-local valueSizes = { 8, 16, 32, 64, 128, 416 }
+local valueSizes = { 8, 16, 32, 64, 128, 416, 424 }
 
 -- Get tbb hash map with fitting key and value size
 function module.createHashmap(keySize, valueSize)
@@ -50,6 +50,8 @@ function module.createHashmap(keySize, valueSize)
        realValueSize = 128
     elseif valueSize <= 416 then
        realValueSize = 416
+    elseif valueSize <= 424 then
+       realValueSize = 424
     else
         log:error("Values of size %d are not supported", valueSize)
         return nil
