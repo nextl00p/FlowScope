@@ -21,7 +21,7 @@ uint8_t* hmapk{key_size}v{value_size}_accessor_get_value(hmapk{key_size}v{value_
 local module = {}
 
 local keySizes = { 8, 16, 32, 64 }
-local valueSizes = { 8, 16, 32, 64, 128, 416, 432, 30000 }
+local valueSizes = { 8, 16, 32, 64, 128, 416, 432, 15000, 20000, 30000, 40000, 52000 }
 
 -- Get tbb hash map with fitting key and value size
 function module.createHashmap(keySize, valueSize)
@@ -52,11 +52,19 @@ function module.createHashmap(keySize, valueSize)
        realValueSize = 416
     elseif valueSize <= 432 then
        realValueSize = 432
+    elseif valueSize <= 15000 then
+       realValueSize = 15000
+    elseif valueSize <= 20000 then
+       realValueSize = 20000
     elseif valueSize <= 30000 then
        realValueSize = 30000
+    elseif valueSize <= 40000 then
+       realValueSize = 40000
+    elseif valueSize <= 52000 then
+       realValueSize = 52000
     else
-        log:error("Values of size %d are not supported", valueSize)
-        return nil
+       log:error("Values of size %d are not supported", valueSize)
+       return nil
     end
 
     return flowtrackerlib["hmapk" .. realKeySize .. "v" .. realValueSize .. "_create"]()
