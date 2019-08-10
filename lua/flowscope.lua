@@ -53,7 +53,7 @@ function master(args)
                 table.insert(tracker.qq, q)
                 tracker:startNewInserter(args.dev[i]:getRxQueue(threadId), q)
                 tracker:startNewDumper(args.path, q)
-                tracker:startNewAnalyzer(args.module, q)
+                tracker:startNewAnalyzer(args.module, q, threadId)
             else
                 tracker:startNewAnalyzer(args.module, args.dev[i]:getRxQueue(threadId))
             end

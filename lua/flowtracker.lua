@@ -87,12 +87,12 @@ function mod.new(args)
 end
 
 -- Starts a new analyzer
-function flowtracker:startNewAnalyzer(userModule, queue)
+function flowtracker:startNewAnalyzer(userModule, queue, threadId)
     local p = pipe.newFastPipe()
     table.insert(self.pipes, p) -- Store pipes so the checker can access them
     if ffi.istype("qq_t", queue) then
         log:info("QQ mode")
-        lm.startTask("__FLOWTRACKER_ANALYZER_QQ", self, userModule, queue, p)
+        lm.startTask("__FLOWTRACKER_ANALYZER_QQ", self, userModule, queue, p, threadId)
     else
         log:info("direct mode")
         lm.startTask("__FLOWTRACKER_ANALYZER", self, userModule, queue, p)
@@ -187,7 +187,7 @@ function flowtracker:analyzer(userModule, queue, flowPipe)
     rxCtr:finalize()
 end
 
-function flowtracker:analyzerQQ(userModule, queue, flowPipe)
+function flowtracker:analyzerQQ(userModule, queue, flowPipe, threadId)
     userModule = loadfile(userModule)()
 
     -- Cast flow state + default back to correct type
@@ -210,7 +210,7 @@ function flowtracker:analyzerQQ(userModule, queue, flowPipe)
     local keyBuf = ffi.new("uint8_t[?]", sz)
     log:info("Key buffer size: %i", sz)
 
-    local rxCtr = stats:newPktRxCounter("Analyzer")
+    local rxCtr = stats:newPktRxCounter("Analyzer "..tostring(threadId)) --, "csv", "analyzer.csv")
 
     --require("jit.p").start("a")
     while lm.running(self.shutdownDelay) do
@@ -359,7 +359,7 @@ function flowtracker:dumper(id, qq, path, filterPipe)
 
     log:setLevel("INFO")
 
-    require("jit.p").start("a")
+    --require("jit.p").start("a")
     local handleEvent = function(event)
         if event == nil then
             return
@@ -433,7 +433,7 @@ function flowtracker:dumper(id, qq, path, filterPipe)
         end
         rxCtr:update(0, 0)
     end
-    require("jit.p").stop()
+    --require("jit.p").stop()
     rxCtr:finalize()
     for _, rule in pairs(ruleSet) do
         rule.pcap:close()
